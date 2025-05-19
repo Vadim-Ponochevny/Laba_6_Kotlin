@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
 class Adapter(
-    private val context: Context,
-    private val list: List<String>
+    private val list: List<String>,
+    private val onClick: (String) -> Unit
 ) : RecyclerView.Adapter<Adapter.ViewHolder>() {
 
     // ViewHolder — держит ссылки на элементы одной строки списка
@@ -20,7 +20,7 @@ class Adapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.rview_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.rview_item, parent, false)
         return ViewHolder(view)
     }
 
@@ -32,11 +32,8 @@ class Adapter(
             .load(UrlOfCurrentItem)
             .into(holder.viewItem as ImageView)
 
-
-        holder.viewItem.setOnClickListener {
-            val intent = Intent(context, PicViewerActivity::class.java)
-            intent.putExtra("IMAGE_URL", UrlOfCurrentItem)
-            context.startActivity(intent)
+        holder.itemView.setOnClickListener {
+            onClick(UrlOfCurrentItem)
         }
     }
 

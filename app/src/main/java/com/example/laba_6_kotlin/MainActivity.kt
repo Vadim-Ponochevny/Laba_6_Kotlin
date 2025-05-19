@@ -1,5 +1,6 @@
 package com.example.laba_6_kotlin
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -53,9 +54,17 @@ class MainActivity : AppCompatActivity() {
     private fun setupRecyclerView(photoUrls: List<String>) {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = GridLayoutManager(this, 2)
-        recyclerView.adapter = Adapter(this, photoUrls)
+        recyclerView.adapter = Adapter(photoUrls) { imageUrl ->
+            openActivity(imageUrl)
+        }
 
         Timber.d("Adapter attached with ${photoUrls.size} items")
+    }
+
+    private fun openActivity(imageUrl: String) {
+        val intent = Intent(this, PicViewerActivity::class.java)
+        intent.putExtra("IMAGE_URL", imageUrl)
+        startActivity(intent)
     }
 
     private suspend fun fetchPhotosFromApi(): List<Photo> = withContext(Dispatchers.IO) {

@@ -1,5 +1,6 @@
 package com.example.laba_6_kotlin
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -58,8 +59,15 @@ class PicViewerActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_favorite -> {
-                Toast.makeText(this, "Добавлено в Избранное", Toast.LENGTH_SHORT).show()
-                return true
+                val imageUrl = intent.getStringExtra("IMAGE_URL") ?: ""
+
+                val resultIntent = Intent().apply {
+                    putExtra("FAVORITE_IMAGE_URL", imageUrl)
+                    putExtra("IS_FAVORITE", true)
+                }
+
+                setResult(RESULT_OK, resultIntent)
+                finish()
             }
         }
         return super.onOptionsItemSelected(item)

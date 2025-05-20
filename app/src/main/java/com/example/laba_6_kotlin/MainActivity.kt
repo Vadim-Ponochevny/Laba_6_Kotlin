@@ -1,11 +1,15 @@
 package com.example.laba_6_kotlin
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,7 +68,32 @@ class MainActivity : AppCompatActivity() {
     private fun openActivity(imageUrl: String) {
         val intent = Intent(this, PicViewerActivity::class.java)
         intent.putExtra("IMAGE_URL", imageUrl)
-        startActivity(intent)
+        startActivityForResult(intent, REQUEST_CODE)
+    }
+
+    companion object {
+        private const val REQUEST_CODE = 101
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == RESULT_OK) {
+            val imageUrl = data?.getStringExtra("FAVORITE_IMAGE_URL")
+            val isFavorite = data?.getBooleanExtra("IS_FAVORITE", false) ?: false
+
+            if (isFavorite && imageUrl != null) {
+
+                val rootView = findViewById<View>(android.R.id.content)
+                Snackbar.make(rootView, "Картинка добавлена в избранное", Snackbar.LENGTH_LONG)
+                    .setAction("ОТКРЫТЬ") {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(imageUrl))
+                        startActivity(intent)
+                    }
+                    .show()
+
+            }
+        }
     }
 
     private suspend fun fetchPhotosFromApi(): List<Photo> = withContext(Dispatchers.IO) {
@@ -91,3 +120,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+
